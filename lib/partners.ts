@@ -8,8 +8,11 @@ export type Partner = {
   locales: Locale[];
   jurisdictions: string[];
   headline: Record<Locale, string>;
+  cta: Record<Locale, string>;
   termsUrl: string | null;
   disclosure: Record<Locale, string>;
+  eligibility: Record<Locale, string>;
+  minimumAge: number | null;
   startsAt: string | null;
   endsAt: string | null;
 };
@@ -26,11 +29,20 @@ export const partners: Partner[] = [
       en: "Partner placement",
       es: "Espacio para socio",
     },
+    cta: {
+      en: "Review offer",
+      es: "Revisar oferta",
+    },
     termsUrl: null,
     disclosure: {
       en: "Affiliate placement",
       es: "Espacio de afiliado",
     },
+    eligibility: {
+      en: "Adults only where permitted. Terms apply.",
+      es: "Solo adultos donde esté permitido. Aplican términos.",
+    },
+    minimumAge: null,
     startsAt: null,
     endsAt: null,
   },
@@ -41,19 +53,65 @@ export const partnerLinkProps = {
   rel: "sponsored nofollow noopener",
 } as const;
 
+function requireHttpsUrl(value: string | null, label: string) {
+  if (!value) throw new Error(`Active partner requires ${label}`);
+
+  let parsed: URL;
+  try {
+    parsed = new URL(value);
+  } catch {
+    throw new Error(`Active partner ${label} must use a valid HTTPS URL`);
+  }
+
+  if (parsed.protocol !== "https:" || parsed.username || parsed.password) {
+    throw new Error(`Active partner ${label} must use a valid HTTPS URL`);
+  }
+}
+
+function campaignDate(value: string | null, label: string) {
+  if (!value) return null;
+  const timestamp = Date.parse(value);
+  if (!Number.isFinite(timestamp)) {
+    throw new Error(`Active partner ${label} date is invalid`);
+  }
+  return timestamp;
+}
+
 export function validatePartner(partner: Partner): Partner {
-  if (partner.active && !partner.url) {
-    throw new Error("Active partner requires a destination URL");
+  if (!partner.active) return partner;
+
+  requireHttpsUrl(partner.url, "destination");
+  requireHttpsUrl(partner.termsUrl, "terms");
+
+  if (partner.locales.length === 0 || partner.jurisdictions.length === 0) {
+    throw new Error("Active partner requires locale and jurisdiction eligibility");
   }
-  if (partner.active && !partner.termsUrl) {
-    throw new Error("Active partner requires terms");
+
+  for (const locale of partner.locales) {
+    if (
+      !partner.headline[locale]?.trim() ||
+      !partner.cta[locale]?.trim() ||
+      !partner.disclosure[locale]?.trim() ||
+      !partner.eligibility[locale]?.trim()
+    ) {
+      throw new Error(`Active partner requires complete ${locale} copy`);
+    }
   }
+
   if (
-    partner.active &&
-    (!partner.disclosure.en || !partner.disclosure.es)
+    partner.minimumAge === null ||
+    !Number.isInteger(partner.minimumAge) ||
+    partner.minimumAge < 18
   ) {
-    throw new Error("Active partner requires disclosure");
+    throw new Error("Active partner requires a minimum age of 18 or higher");
   }
+
+  const startsAt = campaignDate(partner.startsAt, "start");
+  const endsAt = campaignDate(partner.endsAt, "end");
+  if (startsAt !== null && endsAt !== null && startsAt > endsAt) {
+    throw new Error("Active partner campaign date range is invalid");
+  }
+
   return partner;
 }
 

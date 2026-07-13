@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { metadataForHost, organizationJsonLd } from "../lib/metadata";
+import {
+  metadataForHost,
+  organizationJsonLd,
+  sectionMetadataOptions,
+} from "../lib/metadata";
 
 describe("launch metadata", () => {
   it("builds absolute social images from the incoming host", () => {
@@ -25,6 +29,57 @@ describe("launch metadata", () => {
       en: "/en",
       es: "/es",
       "x-default": "/",
+    });
+  });
+
+  it("publishes route-specific Spanish metadata", () => {
+    const metadata = metadataForHost("entrepoker.com", "https", {
+      locale: "es",
+      canonicalPath: "/es/noticias",
+      alternatePaths: {
+        en: "/en/news",
+        es: "/es/noticias",
+        "x-default": "/en/news",
+      },
+      pageTitle: "Noticias",
+      pageDescription: "Noticias independientes de póker.",
+    });
+
+    expect(metadata.alternates).toEqual({
+      canonical: "/es/noticias",
+      languages: {
+        en: "/en/news",
+        es: "/es/noticias",
+        "x-default": "/en/news",
+      },
+    });
+    expect(metadata.title).toEqual({ absolute: "Noticias | Entrepoker" });
+    expect(metadata.description).toBe("Noticias independientes de póker.");
+    expect(metadata.openGraph).toMatchObject({
+      locale: "es_ES",
+      alternateLocale: ["en_US"],
+      url: "https://entrepoker.com/es/noticias",
+    });
+  });
+
+  it("maps section canonicals and alternates into both languages", () => {
+    expect(
+      sectionMetadataOptions(
+        "es",
+        "affiliate-disclosure",
+        "Divulgación de afiliados",
+        "Relaciones comerciales transparentes.",
+      ),
+    ).toEqual({
+      locale: "es",
+      canonicalPath: "/es/divulgacion-afiliados",
+      alternatePaths: {
+        en: "/en/affiliate-disclosure",
+        es: "/es/divulgacion-afiliados",
+        "x-default": "/en/affiliate-disclosure",
+      },
+      pageTitle: "Divulgación de afiliados",
+      pageDescription: "Relaciones comerciales transparentes.",
     });
   });
 

@@ -1,5 +1,41 @@
 import type { Locale } from "../lib/content";
-import { getEligiblePartners, partnerLinkProps } from "../lib/partners";
+import {
+  getEligiblePartners,
+  partnerLinkProps,
+  validatePartner,
+  type Partner,
+} from "../lib/partners";
+
+export function PartnerOffer({
+  locale,
+  partner,
+}: {
+  locale: Locale;
+  partner: Partner;
+}) {
+  validatePartner(partner);
+
+  return (
+    <article className="affiliate-offer">
+      <span className="affiliate-rail__label">
+        {partner.disclosure[locale]}
+      </span>
+      <strong>{partner.headline[locale]}</strong>
+      <p>{partner.eligibility[locale]}</p>
+      <small>
+        {partner.minimumAge}+ · {partner.jurisdictions.join(", ")}
+      </small>
+      <div className="affiliate-offer__actions">
+        <a href={partner.url!} {...partnerLinkProps}>
+          {partner.cta[locale]}
+        </a>
+        <a href={partner.termsUrl!} {...partnerLinkProps}>
+          {locale === "en" ? "Terms" : "Términos"}
+        </a>
+      </div>
+    </article>
+  );
+}
 
 export function AffiliateRail({ locale }: { locale: Locale }) {
   const eligible = getEligiblePartners(locale, "global", new Date());
@@ -30,13 +66,7 @@ export function AffiliateRail({ locale }: { locale: Locale }) {
   return (
     <aside className="affiliate-rail">
       {eligible.map((partner) => (
-        <a
-          key={partner.id}
-          href={partner.url!}
-          {...partnerLinkProps}
-        >
-          {partner.headline[locale]}
-        </a>
+        <PartnerOffer key={partner.id} locale={locale} partner={partner} />
       ))}
     </aside>
   );

@@ -85,6 +85,12 @@ export function SiteShell({
           </p>
         </div>
         <div className="footer-links">
+          <a href={localizedPagePath(locale, "about")}>
+            {locale === "en" ? "About" : "Acerca de"}
+          </a>
+          <a href={localizedPagePath(locale, "contact")}>
+            {locale === "en" ? "Contact" : "Contacto"}
+          </a>
           <a href={localizedPagePath(locale, "affiliate-disclosure")}>
             {locale === "en"
               ? "Affiliate disclosure"

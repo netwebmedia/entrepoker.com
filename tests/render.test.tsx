@@ -1,10 +1,11 @@
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { AffiliateRail } from "../components/affiliate";
+import { AffiliateRail, PartnerOffer } from "../components/affiliate";
 import { HomePage } from "../components/home-page";
 import { LanguageGateway } from "../components/language-gateway";
 import { SectionPage } from "../components/section-page";
+import { partners } from "../lib/partners";
 
 describe("Entrepoker rendering", () => {
   it("offers explicit English and Spanish entry links", () => {
@@ -31,6 +32,25 @@ describe("Entrepoker rendering", () => {
     expect(html).not.toContain("https://");
   });
 
+  it("renders every active partner safeguard beside the offer", () => {
+    const partner = {
+      ...partners[0]!,
+      active: true,
+      url: "https://partner.example/entrepoker",
+      termsUrl: "https://partner.example/terms",
+      minimumAge: 18,
+    };
+    const html = renderToStaticMarkup(
+      <PartnerOffer locale="en" partner={partner} />,
+    );
+
+    expect(html).toContain("Affiliate placement");
+    expect(html).toContain("Adults only where permitted");
+    expect(html).toContain("Review offer");
+    expect(html).toContain("Terms");
+    expect(html).toContain('rel="sponsored nofollow noopener"');
+  });
+
   it("uses a main landmark and a single visible h1", () => {
     const html = renderToStaticMarkup(<HomePage locale="es" />);
     expect(html.match(/<main/g)?.length).toBe(1);
@@ -54,6 +74,8 @@ describe("Entrepoker rendering", () => {
       <SectionPage locale="en" section="responsible-play" />,
     );
     expect(homepage).toContain('href="/es/juego-responsable"');
+    expect(homepage).toContain('href="/es/acerca-de"');
+    expect(homepage).toContain('href="/es/contacto"');
     expect(homepage).not.toContain('href="/es/responsible-play"');
     expect(responsible).toContain('href="/es/juego-responsable"');
   });

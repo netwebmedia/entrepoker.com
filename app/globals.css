@@ -488,6 +488,44 @@ main > section {
   font-size: 0.79rem;
 }
 
+.affiliate-offer {
+  position: relative;
+  width: 100%;
+}
+
+.affiliate-offer small {
+  display: block;
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.affiliate-offer__actions {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.affiliate-offer__actions a {
+  min-height: 44px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  font-size: 0.69rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.affiliate-offer__actions a:first-child {
+  border-color: var(--blue);
+  background: var(--blue);
+}
+
 .section-heading {
   margin-bottom: 24px;
   padding-bottom: 16px;

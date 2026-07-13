@@ -8,7 +8,10 @@ type SectionContent = {
   body: string;
 };
 
-const sectionContent: Record<Locale, Record<PageSection, SectionContent>> = {
+export const sectionContent: Record<
+  Locale,
+  Record<PageSection, SectionContent>
+> = {
   en: {
     news: {
       eyebrow: "EDITORIAL DESK",

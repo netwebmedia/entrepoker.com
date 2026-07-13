@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { metadataForHost, organizationJsonLd } from "../lib/metadata";
-import "./globals.css";
+import {
+  metadataForHost,
+  organizationJsonLd,
+} from "../../lib/metadata";
+import "../globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
   const incomingHeaders = await headers();
@@ -12,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return metadataForHost(host ?? "entrepoker.com", protocol);
 }
 
-export default function RootLayout({
+export default function GatewayRootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
