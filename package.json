@@ -1,5 +1,5 @@
 {
-  "name": "site-creator-vinext-starter",
+  "name": "entrepoker-media-hub",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -38,6 +38,11 @@
     "vite": "8.0.13",
     "vitest": "^4.1.10",
     "wrangler": "4.92.0"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "8.5.14"
+    }
   },
   "type": "module"
 }
