@@ -1,15 +1,21 @@
 import type { ReactNode } from "react";
 import { localeContent, type Locale } from "../lib/content";
+import { localizedPagePath, type PageSection } from "../lib/i18n";
 
 export function SiteShell({
   locale,
+  section,
   children,
 }: {
   locale: Locale;
+  section?: PageSection;
   children: ReactNode;
 }) {
   const otherLocale = locale === "en" ? "es" : "en";
   const copy = localeContent[locale];
+  const alternatePath = section
+    ? localizedPagePath(otherLocale, section)
+    : `/${otherLocale}`;
 
   return (
     <div className="site">
@@ -39,7 +45,7 @@ export function SiteShell({
           <div className="brand-actions">
             <a href="https://www.facebook.com/entrepoker">Facebook</a>
             <a href={`/${locale}/videos`}>Videos</a>
-            <a className="language-link" href={`/${otherLocale}`}>
+            <a className="language-link" href={alternatePath}>
               {otherLocale.toUpperCase()}
             </a>
           </div>
@@ -79,18 +85,18 @@ export function SiteShell({
           </p>
         </div>
         <div className="footer-links">
-          <a href={`/${locale}/affiliate-disclosure`}>
+          <a href={localizedPagePath(locale, "affiliate-disclosure")}>
             {locale === "en"
               ? "Affiliate disclosure"
               : "Divulgación de afiliados"}
           </a>
-          <a href={`/${locale}/responsible-play`}>
+          <a href={localizedPagePath(locale, "responsible-play")}>
             {locale === "en" ? "Responsible play" : "Juego responsable"}
           </a>
-          <a href={`/${locale}/privacy`}>
+          <a href={localizedPagePath(locale, "privacy")}>
             {locale === "en" ? "Privacy" : "Privacidad"}
           </a>
-          <a href={`/${locale}/terms`}>
+          <a href={localizedPagePath(locale, "terms")}>
             {locale === "en" ? "Terms" : "Términos"}
           </a>
         </div>
